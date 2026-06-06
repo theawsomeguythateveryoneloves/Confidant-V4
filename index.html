@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confidant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+    :root {
+      --bg: #ffffff;
+      --bg2: #f5f4f1;
+      --bg3: #eeece8;
+      --text: #1a1a1a;
+      --text2: #6b6b6b;
+      --text3: #a0a0a0;
+      --border: rgba(0,0,0,0.1);
+      --border2: rgba(0,0,0,0.2);
+      --radius: 8px;
+      --radius-lg: 12px;
+    }
+ 
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a1a;
+        --bg2: #242424;
+        --bg3: #2e2e2e;
+        --text: #f0ede8;
+        --text2: #9a9a9a;
+        --text3: #666;
+        --border: rgba(255,255,255,0.1);
+        --border2: rgba(255,255,255,0.2);
+      }
+    }
+ 
+    html, body {
+      height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+ 
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      min-height: 100vh;
+    }
+ 
+    .app {
+      width: 100%;
+      max-width: 540px;
+      background: var(--bg);
+      border: 0.5px solid var(--border2);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 560px;
+    }
+ 
+    /* Header */
+    .hdr {
+      padding: 1.25rem 1.5rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 0.5px solid var(--border);
+    }
+ 
+    .logo {
+      font-family: 'Lora', serif;
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.2px;
+    }
+ 
+    .logo em {
+      font-style: italic;
+      color: var(--text2);
+      font-weight: 400;
+    }
+ 
+    .reset-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: transparent;
+      border: 0.5px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 12px;
+      color: var(--text3);
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.15s;
+    }
+ 
+    .reset-btn:hover {
+      color: var(--text2);
+      border-color: var(--border2);
+    }
+ 
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      padding: 10px 1.5rem 0;
+    }
+ 
+    .tab {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 7px 14px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 400;
+      cursor: pointer;
+      border: 0.5px solid transparent;
+      color: var(--text2);
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.12s;
+    }
+ 
+    .tab:hover { background: var(--bg2); }
+ 
+    .tab.on {
+      background: var(--bg);
+      border-color: var(--border2);
+      color: var(--text);
+      font-weight: 500;
+    }
+ 
+    .tab svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+ 
+    /* Chat pane */
+    #p-chat { display: flex; flex-direction: column; flex: 1; }
+ 
+    .msgs {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 1.25rem 1.5rem;
+      flex: 1;
+      overflow-y: auto;
+      min-height: 240px;
+      max-height: 340px;
+    }
+ 
+    .row { display: flex; gap: 10px; align-items: flex-start; }
+    .row.u { flex-direction: row-reverse; }
+ 
+    .av {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--bg2);
+      border: 0.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+      color: var(--text2);
+    }
+ 
+    .av svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+ 
+    .bub {
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 10px 14px;
+      border-radius: 0 12px 12px 12px;
+      background: var(--bg2);
+      border: 0.5px solid var(--border);
+      color: var(--text);
+      max-width: 380px;
+    }
+ 
+    .row.u .bub {
+      border-radius: 12px 0 12px 12px;
+      background: var(--bg);
+    }
+ 
+    .inp-row {
+      display: flex;
+      gap: 8px;
+      padding: 10px 1.5rem 1.25rem;
+      border-top: 0.5px solid var(--border);
+      margin-top: 4px;
+    }
+ 
+    .inp-row input {
+      flex: 1;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      background: var(--bg2);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0 12px;
+      height: 36px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+ 
+    .inp-row input:focus { border-color: var(--border2); }
+    .inp-row input::placeholder { color: var(--text3); }
+ 
+    .send-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius);
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: opacity 0.15s;
+    }
+ 
+    .send-btn:hover { opacity: 0.8; }
+    .send-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+ 
+    /* Generate panes */
+    .gpane {
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      flex: 1;
+      min-height: 280px;
+    }
+ 
+    .ocard {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      flex: 1;
+    }
+ 
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--text3);
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+ 
+    .otxt {
+      font-family: 'Lora', serif;
+      font-size: 18px;
+      line-height: 1.65;
+      color: var(--text);
+    }
+ 
+    .punch {
+      display: block;
+      margin-top: 10px;
+      font-style: italic;
+      font-size: 16px;
+      color: var(--text2);
+    }
+ 
+    .obody {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text2);
+      margin-top: 8px;
+      font-family: 'DM Sans', sans-serif;
+    }
+ 
+    .tag-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
+ 
+    .tag {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--bg2);
+      border: 0.5px solid var(--border);
+      color: var(--text2);
+    }
+ 
+    .gbtns { display: flex; gap: 8px; flex-wrap: wrap; }
+ 
+    .gb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 0.5px solid var(--border2);
+      background: transparent;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.12s;
+    }
+ 
+    .gb:hover { background: var(--bg2); }
+    .gb:active { transform: scale(0.98); }
+ 
+    .gb.p {
+      background: var(--text);
+      color: var(--bg);
+      border-color: var(--text);
+    }
+ 
+    .gb.p:hover { opacity: 0.85; }
+    .gb svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; }
+ 
+    /* Empty state */
+    .empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--text3);
+      font-size: 13px;
+      text-align: center;
+      flex: 1;
+      padding: 2.5rem 0;
+    }
+ 
+    .empty svg { width: 28px; height: 28px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+    .empty small { font-size: 12px; max-width: 220px; line-height: 1.55; color: var(--text3); }
+ 
+    /* Spinner */
+    .spin {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
+      border-top-color: var(--text2);
+      border-radius: 50%;
+      animation: sp 0.65s linear infinite;
+      display: inline-block;
+    }
+ 
+    @keyframes sp { to { transform: rotate(360deg); } }
+ 
+    /* API key notice */
+    .notice {
+      background: var(--bg2);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.5;
+      margin: 0 1.5rem 1rem;
+    }
+ 
+    .notice a { color: var(--text); }
+  </style>
+</head>
+<body>
+ 
+<div class="app">
+  <div class="hdr">
+    <div class="logo">Confidant <em>— yours</em></div>
+    <button class="reset-btn" onclick="resetAll()">
+      <svg viewBox="0 0 24 24" width="12" height="12"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+      Start over
+    </button>
+  </div>
+ 
+  <div class="tabs">
+    <button class="tab on" id="t-chat" onclick="showPane('chat')">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Chat
+    </button>
+    <button class="tab" id="t-joke" onclick="showPane('joke')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg>
+      Joke
+    </button>
+    <button class="tab" id="t-advice" onclick="showPane('advice')">
+      <svg viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 1 7 7c0 2.5-1.5 4.5-3 6H8c-1.5-1.5-3-3.5-3-6a7 7 0 0 1 7-7z"/></svg>
+      Advice
+    </button>
+  </div>
+ 
+  <div id="p-chat">
+    <div class="msgs" id="msgs"></div>
+    <div class="notice">
+      <strong>Developer Sandbox Mode:</strong> Client-side API streaming is enabled. Make sure to open this document through a local server deployment (like VS Code Live Server) to bypass security sandboxes.
+    </div>
+    <div class="inp-row">
+      <input type="text" id="ci" placeholder="Say something..." onkeydown="if(event.key==='Enter')sendMsg()" />
+      <button class="send-btn" onclick="sendMsg()" aria-label="Send">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+      </button>
+    </div>
+  </div>
+ 
+  <div id="p-joke" class="gpane" style="display:none">
+    <div id="joke-out" style="flex:1;display:flex;flex-direction:column">
+      <div class="empty">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg>
+        <span>No joke yet</span>
+        <small>Chat a bit first for something personal, or just hit generate.</small>
+      </div>
+    </div>
+    <div class="gbtns">
+      <button class="gb p" onclick="gen('joke', false)">
+        <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        New joke
+      </button>
+      <button class="gb" onclick="gen('joke', true)">
+        <svg viewBox="0 0 24 24">
